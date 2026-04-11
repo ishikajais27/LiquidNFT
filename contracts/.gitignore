@@ -1,2 +1,15 @@
 .env
 foundry.toml
+# Foundry build & cache
+out/
+cache/
+
+# Broadcast logs (deployments)
+broadcast/
+
+# Dependencies (optional, if using git submodules keep it)
+lib/
+
+# OS / misc
+.DS_Store
+.env
