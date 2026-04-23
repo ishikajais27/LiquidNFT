@@ -12,10 +12,10 @@ contract Deploy is Script {
         uint256 deployerKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerKey);
 
-        NFTEscrow escrow        = new NFTEscrow();
-        LendingPool pool        = new LendingPool();
-        LiquidationAuction auc  = new LiquidationAuction(address(escrow));
-        LoanManager manager     = new LoanManager(address(escrow), address(pool), address(auc));
+        NFTEscrow escrow       = new NFTEscrow();
+        LendingPool pool       = new LendingPool();
+        LiquidationAuction auc = new LiquidationAuction(address(escrow));
+        LoanManager manager    = new LoanManager(address(escrow), address(pool), address(auc));
 
         escrow.setLoanManager(address(manager));
         pool.setLoanManager(address(manager));

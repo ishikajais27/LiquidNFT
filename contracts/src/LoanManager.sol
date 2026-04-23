@@ -7,6 +7,8 @@ import "./NFTEscrow.sol";
 import "./LendingPool.sol";
 import "./LiquidationAuction.sol";
 
+// The main coordinator. Borrowers interact here to take loans,
+// repay them, or get defaulted. It talks to the other contracts.
 contract LoanManager is Ownable, ReentrancyGuard {
     NFTEscrow public nftEscrow;
     LendingPool public lendingPool;
@@ -42,19 +44,16 @@ contract LoanManager is Ownable, ReentrancyGuard {
         liquidationAuction = LiquidationAuction(_auction);
     }
 
-    // Borrower accepts an offer and puts NFT as collateral
+    // Borrower picks an offer, locks their NFT, and receives the ETH
     function takeLoan(bytes32 escrowId, uint256 offerId) external nonReentrant returns (uint256 loanId) {
         NFTEscrow.EscrowedNFT memory escrowed = nftEscrow.getEscrow(escrowId);
-        require(escrowed.owner == msg.sender, "Not NFT owner");
-        require(!escrowed.isLocked, "NFT already locked");
+        require(escrowed.owner == msg.sender, "Not your NFT");
+        require(!escrowed.isLocked, "NFT already in use");
 
         LendingPool.Offer memory offer = lendingPool.getOffer(offerId);
-        require(offer.active, "Offer not active");
+        require(offer.active, "Offer no longer available");
 
-        // Lock NFT
         nftEscrow.lockNFT(escrowId);
-
-        // Transfer funds to borrower
         lendingPool.matchOffer(offerId, msg.sender);
 
         loanId = loanCount++;
@@ -76,23 +75,21 @@ contract LoanManager is Ownable, ReentrancyGuard {
         emit LoanCreated(loanId, msg.sender, offer.lender, offer.amount);
     }
 
+    // Borrower pays back principal + accrued interest to get their NFT back
     function repayLoan(uint256 loanId) external payable nonReentrant {
         Loan storage loan = loans[loanId];
         require(loan.borrower == msg.sender, "Not borrower");
         require(loan.status == LoanStatus.Active, "Loan not active");
 
         uint256 totalDue = getTotalDue(loanId);
-        require(msg.value >= totalDue, "Insufficient repayment");
+        require(msg.value >= totalDue, "Not enough to cover repayment");
 
         loan.status = LoanStatus.Repaid;
 
-        // Return NFT to borrower
         nftEscrow.releaseNFT(loan.escrowId, loan.borrower);
-
-        // Pay lender
         lendingPool.repayToLender{value: totalDue}(loan.lender, totalDue);
 
-        // Refund overpayment
+        // Send back any overpayment
         if (msg.value > totalDue) {
             payable(msg.sender).transfer(msg.value - totalDue);
         }
@@ -100,14 +97,13 @@ contract LoanManager is Ownable, ReentrancyGuard {
         emit LoanRepaid(loanId, totalDue);
     }
 
+    // Anyone can call this on an expired loan to kick off the auction
     function triggerDefault(uint256 loanId) external nonReentrant {
         Loan storage loan = loans[loanId];
         require(loan.status == LoanStatus.Active, "Loan not active");
-        require(isExpired(loanId), "Loan not expired");
+        require(isExpired(loanId), "Loan hasn't expired yet");
 
         loan.status = LoanStatus.Defaulted;
-
-        // Start liquidation auction
         liquidationAuction.startAuction(loanId, loan.escrowId, loan.lender, loan.principal);
 
         emit LoanDefaulted(loanId);
@@ -115,12 +111,12 @@ contract LoanManager is Ownable, ReentrancyGuard {
 
     function completeLiquidation(uint256 loanId) external nonReentrant {
         Loan storage loan = loans[loanId];
-        require(loan.status == LoanStatus.Defaulted, "Not defaulted");
-
+        require(loan.status == LoanStatus.Defaulted, "Not in default");
         loan.status = LoanStatus.Liquidated;
         emit LoanLiquidated(loanId);
     }
 
+    // Simple pro-rated interest: principal * rate * elapsed / (year in seconds)
     function getTotalDue(uint256 loanId) public view returns (uint256) {
         Loan memory loan = loans[loanId];
         uint256 elapsed = block.timestamp - loan.startTime;

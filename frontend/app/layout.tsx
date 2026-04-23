@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'LiquidNFT — NFT Lending Marketplace',
-  description: 'Borrow against your NFTs',
+  title: 'LiquidNFT',
+  description: 'NFT Lending Marketplace',
 }
 
 export default function RootLayout({
