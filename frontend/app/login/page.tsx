@@ -79,6 +79,7 @@ export default function LoginPage() {
           padding: 20,
         }}
       >
+        {/* Logo */}
         <div
           style={{
             display: 'flex',
@@ -103,24 +104,31 @@ export default function LoginPage() {
           </span>
         </div>
 
+        {/* Glassmorphism Card */}
         <div
           style={{
             width: '100%',
             maxWidth: 420,
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 16,
+            background: 'rgba(17, 17, 24, 0.4)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(167, 139, 250, 0.3)',
+            boxShadow:
+              '0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 0 1px rgba(167, 139, 250, 0.1) inset, 0 0 20px rgba(167, 139, 250, 0.2)',
+            borderRadius: 30,
             padding: 32,
+            transition: 'all 0.3s ease',
           }}
         >
+          {/* Tabs */}
           <div
             style={{
               display: 'flex',
-              background: 'var(--bg)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              padding: 4,
-              marginBottom: 28,
+              gap: 8,
+              background: 'rgba(10, 10, 15, 0.4)',
+              border: '1px solid rgba(30, 30, 46, 0.6)',
+              borderRadius: 60,
+              padding: 6,
+              marginBottom: 32,
             }}
           >
             {(['login', 'signup'] as const).map((m) => (
@@ -132,16 +140,17 @@ export default function LoginPage() {
                 }}
                 style={{
                   flex: 1,
-                  padding: '9px 0',
+                  padding: '12px 0',
                   border: 'none',
                   cursor: 'pointer',
-                  borderRadius: 6,
+                  borderRadius: 60,
                   fontFamily: "'Syne', sans-serif",
                   fontWeight: 700,
                   fontSize: 14,
                   background: mode === m ? 'var(--accent)' : 'transparent',
-                  color: mode === m ? '#0a0a0f' : 'var(--muted)',
-                  transition: 'all 0.15s',
+                  color: mode === m ? '#0a0a0f' : 'var(--text)',
+                  transition: 'all 0.2s ease',
+                  boxShadow: mode === m ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
                 }}
               >
                 {m === 'login' ? 'Log In' : 'Sign Up'}
@@ -149,7 +158,8 @@ export default function LoginPage() {
             ))}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Form fields */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
               <label style={labelStyle}>Email</label>
               <input
@@ -158,7 +168,21 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 placeholder="you@example.com"
-                style={inputStyle}
+                style={{
+                  ...inputStyle,
+                  background: 'rgba(10, 10, 15, 0.6)',
+                  border: '1px solid rgba(30, 30, 46, 0.8)',
+                  transition: 'all 0.2s ease',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(167, 139, 250, 0.8)'
+                  e.target.style.boxShadow =
+                    '0 0 0 2px rgba(167, 139, 250, 0.2)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(30, 30, 46, 0.8)'
+                  e.target.style.boxShadow = 'none'
+                }}
               />
             </div>
             <div>
@@ -171,7 +195,21 @@ export default function LoginPage() {
                 placeholder={
                   mode === 'signup' ? 'Min. 6 characters' : '••••••••'
                 }
-                style={inputStyle}
+                style={{
+                  ...inputStyle,
+                  background: 'rgba(10, 10, 15, 0.6)',
+                  border: '1px solid rgba(30, 30, 46, 0.8)',
+                  transition: 'all 0.2s ease',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(167, 139, 250, 0.8)'
+                  e.target.style.boxShadow =
+                    '0 0 0 2px rgba(167, 139, 250, 0.2)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(30, 30, 46, 0.8)'
+                  e.target.style.boxShadow = 'none'
+                }}
               />
             </div>
 
@@ -194,19 +232,34 @@ export default function LoginPage() {
               onClick={handleSubmit}
               disabled={loading}
               style={{
-                marginTop: 4,
+                marginTop: 8,
                 background:
-                  'linear-gradient(135deg, var(--accent), var(--accent2))',
+                  'linear-gradient(105deg, var(--accent) 0%, var(--accent2) 100%)',
                 color: '#0a0a0f',
                 border: 'none',
-                borderRadius: 8,
-                padding: '12px 0',
+                borderRadius: 40,
+                padding: '14px 0',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 fontWeight: 800,
                 fontSize: 15,
                 fontFamily: "'Syne', sans-serif",
                 opacity: loading ? 0.7 : 1,
-                transition: 'opacity 0.15s',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                boxShadow: '0 4px 15px rgba(167, 139, 250, 0.3)',
+              }}
+              onMouseOver={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 20px rgba(167, 139, 250, 0.4)'
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 15px rgba(167, 139, 250, 0.3)'
+                }
               }}
             >
               {loading
@@ -222,7 +275,7 @@ export default function LoginPage() {
               textAlign: 'center',
               color: 'var(--muted)',
               fontSize: 13,
-              marginTop: 24,
+              marginTop: 28,
             }}
           >
             {mode === 'login'
@@ -234,10 +287,17 @@ export default function LoginPage() {
                 setError('')
               }}
               style={{
-                color: 'var(--accent)',
+                background:
+                  'linear-gradient(105deg, var(--accent), var(--accent2))',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
                 cursor: 'pointer',
                 fontWeight: 700,
+                transition: 'opacity 0.2s ease',
               }}
+              onMouseOver={(e) => (e.currentTarget.style.opacity = '0.8')}
+              onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
             >
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </span>
@@ -257,10 +317,9 @@ const labelStyle: React.CSSProperties = {
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
 }
+
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: 'var(--bg)',
-  border: '1px solid var(--border)',
   borderRadius: 6,
   padding: '11px 14px',
   color: 'var(--text)',
