@@ -56,12 +56,15 @@ export default function LoginPage() {
       <div className="liquid-bg-wrapper">
         <LiquidEther
           colors={['#5227FF', '#FF9FFC', '#B497CF']}
-          mouseForce={20}
-          cursorSize={100}
+          mouseForce={28}
+          cursorSize={140}
           autoDemo={true}
-          autoSpeed={0.5}
-          autoIntensity={2.2}
+          autoSpeed={0.6}
+          autoIntensity={3.0}
           resolution={0.5}
+          iterationsPoisson={16}
+          iterationsViscous={16}
+          dt={0.012}
         />
       </div>
 
