@@ -10,12 +10,13 @@ import {
 
 const SEPOLIA_CHAIN_ID = 11155111
 
-export function useWallet() {
+export function useWallet(savedWalletAddress?: string) {
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null)
   const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null)
   const [address, setAddress] = useState<string>('')
   const [wrongNetwork, setWrongNetwork] = useState(false)
   const [connecting, setConnecting] = useState(false)
+  const [disconnecting, setDisconnecting] = useState(false)
 
   const checkAndSwitchNetwork = async (p: ethers.BrowserProvider) => {
     const network = await p.getNetwork()
@@ -33,23 +34,75 @@ export function useWallet() {
     }
   }
 
-  // Auto-connect if wallet already approved this site
-  useEffect(() => {
+  const tryAutoConnect = useCallback(async (expectedAddress?: string) => {
+    // No saved wallet in DB → never auto-connect
+    if (!expectedAddress) return
+
     const eth = (window as any).ethereum
     if (!eth) return
-    const p = new ethers.BrowserProvider(eth)
-    p.getSigner()
-      .then(async (s) => {
-        await checkAndSwitchNetwork(p)
-        setSigner(s)
-        setProvider(p)
-        setAddress(await s.getAddress())
-      })
-      .catch(() => {})
 
+    try {
+      const p = new ethers.BrowserProvider(eth)
+
+      // First try silent check — already approved accounts
+      const accounts: string[] = await eth.request({ method: 'eth_accounts' })
+
+      if (
+        accounts.length > 0 &&
+        accounts[0].toLowerCase() === expectedAddress.toLowerCase()
+      ) {
+        // Already approved in this browser — connect silently
+        await checkAndSwitchNetwork(p)
+        const s = await p.getSigner()
+        setProvider(p)
+        setSigner(s)
+        setAddress(await s.getAddress())
+        return
+      }
+
+      // Not in approved accounts — request permission (will show MetaMask popup)
+      // This is intentional: user has a saved wallet in DB, so we prompt them
+      // to reconnect it on new browser/device
+      const requested: string[] = await eth.request({
+        method: 'eth_requestAccounts',
+      })
+
+      if (
+        requested.length === 0 ||
+        requested[0].toLowerCase() !== expectedAddress.toLowerCase()
+      ) {
+        // Wrong account selected or user rejected — don't connect
+        return
+      }
+
+      await checkAndSwitchNetwork(p)
+      const s = await p.getSigner()
+      setProvider(p)
+      setSigner(s)
+      setAddress(await s.getAddress())
+    } catch (e: any) {
+      // User rejected the popup — silently fail, they can connect manually
+      console.log('Auto-connect rejected or failed:', e?.message)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Wait for authUser to be loaded before trying auto-connect
+    // savedWalletAddress is '' until authUser loads, so this is safe
+    if (savedWalletAddress === undefined) return
+
+    tryAutoConnect(savedWalletAddress)
+
+    const eth = (window as any).ethereum
+    if (!eth) return
     eth.on('accountsChanged', () => window.location.reload())
     eth.on('chainChanged', () => window.location.reload())
-  }, [])
+
+    return () => {
+      eth.removeAllListeners?.('accountsChanged')
+      eth.removeAllListeners?.('chainChanged')
+    }
+  }, [savedWalletAddress, tryAutoConnect])
 
   const connect = useCallback(async () => {
     if (connecting) return
@@ -61,9 +114,17 @@ export function useWallet() {
       await p.send('eth_requestAccounts', [])
       await checkAndSwitchNetwork(p)
       const s = await p.getSigner()
+      const connectedAddress = await s.getAddress()
       setProvider(p)
       setSigner(s)
-      setAddress(await s.getAddress())
+      setAddress(connectedAddress)
+
+      // Save to DB
+      await fetch('/api/auth/wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress: connectedAddress }),
+      })
     } catch (e: any) {
       if (e?.code === -32002) {
         alert(
@@ -74,7 +135,30 @@ export function useWallet() {
     setConnecting(false)
   }, [connecting])
 
-  return { provider, signer, address, connect, wrongNetwork }
+  const disconnect = useCallback(async () => {
+    if (disconnecting) return
+    setDisconnecting(true)
+    try {
+      await fetch('/api/auth/wallet/disconnect', { method: 'POST' })
+      setProvider(null)
+      setSigner(null)
+      setAddress('')
+      setWrongNetwork(false)
+    } catch (err) {
+      console.error('Disconnect error:', err)
+    }
+    setDisconnecting(false)
+  }, [disconnecting])
+
+  return {
+    provider,
+    signer,
+    address,
+    connect,
+    disconnect,
+    disconnecting,
+    wrongNetwork,
+  }
 }
 
 export function useOffers(provider: ethers.BrowserProvider | null) {

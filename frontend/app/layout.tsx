@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'LiquidNFT',
-  description: 'NFT Lending Marketplace',
+  description: 'NFT Lending Marketplace on Sepolia',
 }
 
 export default function RootLayout({

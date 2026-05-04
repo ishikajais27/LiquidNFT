@@ -1,13 +1,3 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  webpack(config, { isServer }) {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      'pino-pretty': false,
-      encoding: false,
-    }
-    return config
-  },
-}
-
+const nextConfig = {}
 module.exports = nextConfig

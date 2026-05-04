@@ -140,4 +140,4 @@ contract LoanManager is Ownable, ReentrancyGuard {
     function getLoan(uint256 loanId) external view returns (Loan memory) {
         return loans[loanId];
     }
-}
+}   
