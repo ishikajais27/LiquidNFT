@@ -1187,11 +1187,17 @@ export default function Home() {
                       </button>
                       {l.expired && (
                         <button
+                          //   onClick={() => {
+                          //     const dbLoan = authUser?.loans?.find(
+                          //       (dl: any) => dl.loanId === l.id,
+                          //     )
+                          //  triggerDefault({ loanId: l.id,  escrowId: dbLoan?.escrowId })
+                          //   }}
                           onClick={() => {
                             const dbLoan = authUser?.loans?.find(
                               (dl: any) => dl.loanId === l.id,
                             )
-                            triggerDefault(l.id, dbLoan?.escrowId)
+                            triggerDefault(l.id)
                           }}
                           disabled={busy}
                           style={btn('var(--red)')}
