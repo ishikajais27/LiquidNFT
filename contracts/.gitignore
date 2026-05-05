@@ -4,9 +4,8 @@ foundry.toml
 out/
 cache/
 
-broadcast/
 
-
-lib
-
-cache/
+broadcast/Deploy.s.sol/31337/*
+cache/*
+lib/*
+out/*
