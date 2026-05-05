@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LiquidNFT Architecture & Theory</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+      :root {
+        --bg: #0a0c10;
+        --bg2: #0f1117;
+        --bg3: #14171f;
+        --border: #2a2d3a;
+        --border-bright: #3a3d4a;
+        --text: #e8eaf0;
+        --text-dim: #8b8fa8;
+        --text-muted: #5a5e72;
+        --accent-blue: #4a9eff;
+        --accent-cyan: #00d4ff;
+        --accent-green: #00e5a0;
+        --accent-yellow: #ffd060;
+        --accent-orange: #ff8c42;
+        --accent-red: #ff4d6a;
+        --accent-purple: #b06aff;
+        --accent-pink: #ff6ab0;
+
+        /* Section colors */
+        --client-color: #4a9eff;
+        --backend-color: #ffd060;
+        --ethereum-color: #b06aff;
+        --theory-color: #ff4d6a;
+        --lifecycle-color: #00e5a0;
+        --auth-color: #ff8c42;
+        --mongo-color: #00d4ff;
+        --impl-color: #ffd060;
+        --deploy-color: #8b8fa8;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Space Grotesk', sans-serif;
+        line-height: 1.5;
+        padding: 48px;
+        min-width: 1600px;
+      }
+
+      /* ── HEADER ── */
+      .page-header {
+        text-align: center;
+        margin-bottom: 56px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid var(--border);
+      }
+      .page-header h1 {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 52px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-cyan),
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+      }
+      .page-header .subtitle {
+        font-size: 16px;
+        color: var(--text-dim);
+        font-style: italic;
+        margin-bottom: 24px;
+        letter-spacing: 1px;
+      }
+      .overview-block {
+        background: #12151d;
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent-cyan);
+        border-radius: 8px;
+        padding: 20px 28px;
+        max-width: 1100px;
+        margin: 0 auto;
+        text-align: left;
+      }
+      .overview-block p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--text-dim);
+        margin-bottom: 10px;
+      }
+      .overview-block p:last-child {
+        margin-bottom: 0;
+      }
+      .overview-block strong {
+        color: var(--text);
+      }
+      .overview-block .label {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--accent-cyan);
+        margin-right: 8px;
+      }
+
+      /* ── SECTION WRAPPER ── */
+      .section {
+        border-radius: 14px;
+        padding: 28px 28px 32px;
+        margin-bottom: 32px;
+        position: relative;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .section-icon {
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .section-title {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ── TOP 4 SECTIONS GRID ── */
+      .top-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      /* ── CARD ── */
+      .card {
+        background: #12151d;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px 20px;
+        transition: border-color 0.2s;
+      }
+      .card:hover {
+        border-color: var(--border-bright);
+      }
+      .card-title {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .card-body {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.8;
+      }
+      .card-body .line {
+        display: block;
+      }
+      .card-body .hi {
+        color: var(--text);
+      }
+      .card-body .code {
+        color: var(--accent-cyan);
+      }
+      .card-body .arrow {
+        color: var(--accent-green);
+      }
+      .card-body .warn {
+        color: var(--accent-yellow);
+      }
+
+      /* ── BADGES / TAGS ── */
+      .badge {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+      }
+
+      /* ── CLIENT LAYER ── */
+      .client-section {
+        background: #0e1219;
+        border: 1.5px solid rgba(74, 158, 255, 0.3);
+      }
+      .client-section .section-title {
+        color: var(--client-color);
+      }
+      .client-section .card-title {
+        color: var(--client-color);
+      }
+      .client-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ── BACKEND LAYER ── */
+      .backend-section {
+        background: #0e1119;
+        border: 1.5px solid rgba(255, 208, 96, 0.3);
+      }
+      .backend-section .section-title {
+        color: var(--backend-color);
+      }
+      .backend-section .card-title {
+        color: var(--backend-color);
+      }
+      .backend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ── ETHEREUM LAYER ── */
+      .eth-section {
+        background: #100e19;
+        border: 1.5px solid rgba(176, 106, 255, 0.3);
+      }
+      .eth-section .section-title {
+        color: var(--ethereum-color);
+      }
+      .eth-section .card-title {
+        color: var(--ethereum-color);
+      }
+      .eth-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+      }
+      .center-contract {
+        background: linear-gradient(
+          135deg,
+          rgba(176, 106, 255, 0.12),
+          rgba(176, 106, 255, 0.05)
+        );
+        border: 1.5px solid rgba(176, 106, 255, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .center-contract .name {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--ethereum-color);
+        letter-spacing: 2px;
+      }
+      .center-contract .role {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+
+      /* ── THEORY LAYER ── */
+      .theory-section {
+        background: #130e0f;
+        border: 1.5px solid rgba(255, 77, 106, 0.3);
+      }
+      .theory-section .section-title {
+        color: var(--theory-color);
+      }
+      .theory-section .card-title {
+        color: var(--theory-color);
+      }
+      .theory-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ── LIFECYCLE ── */
+      .lifecycle-section {
+        background: #0a120f;
+        border: 1.5px solid rgba(0, 229, 160, 0.3);
+      }
+      .lifecycle-section .section-title {
+        color: var(--lifecycle-color);
+      }
+      .flow-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin-bottom: 20px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+      .flow-step {
+        background: #12181a;
+        border: 1.5px solid rgba(0, 229, 160, 0.25);
+        border-radius: 10px;
+        padding: 18px 20px;
+        flex: 1;
+        min-width: 180px;
+        position: relative;
+      }
+      .flow-step .step-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--lifecycle-color);
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+      }
+      .flow-step .step-title {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .flow-step .step-body {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-dim);
+        line-height: 1.7;
+      }
+      .flow-arrow {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        color: var(--lifecycle-color);
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      .flow-branch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .branch-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .branch-good {
+        color: var(--accent-green);
+      }
+      .branch-bad {
+        color: var(--accent-red);
+      }
+      .flow-step.good {
+        border-color: rgba(0, 229, 160, 0.4);
+      }
+      .flow-step.bad {
+        border-color: rgba(255, 77, 106, 0.4);
+      }
+
+      /* ── AUTH ── */
+      .auth-section {
+        background: #120f0a;
+        border: 1.5px solid rgba(255, 140, 66, 0.3);
+      }
+      .auth-section .section-title {
+        color: var(--auth-color);
+      }
+      .auth-section .card-title {
+        color: var(--auth-color);
+      }
+      .auth-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .auth-grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ── MONGO ── */
+      .mongo-section {
+        background: #0a1214;
+        border: 1.5px solid rgba(0, 212, 255, 0.3);
+      }
+      .mongo-section .section-title {
+        color: var(--mongo-color);
+      }
+      .mongo-section .card-title {
+        color: var(--mongo-color);
+      }
+      .mongo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .mongo-grid2 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+
+      /* ── MID 2-COL LAYOUT ── */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      /* ── IMPL SECTION ── */
+      .impl-section {
+        background: #111008;
+        border: 1.5px solid rgba(255, 208, 96, 0.25);
+      }
+      .impl-section .section-title {
+        color: var(--impl-color);
+      }
+      .impl-section .card-title {
+        color: var(--impl-color);
+      }
+      .impl-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+      }
+
+      /* ── DEPLOY SECTION ── */
+      .deploy-section {
+        background: #0f1012;
+        border: 1.5px solid rgba(139, 143, 168, 0.3);
+      }
+      .deploy-section .section-title {
+        color: var(--deploy-color);
+      }
+      .deploy-section .card-title {
+        color: var(--deploy-color);
+      }
+      .deploy-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+      }
+
+      /* ── FLOW CONNECTOR LABELS ── */
+      .connector-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-muted);
+        display: block;
+        text-align: center;
+        margin-top: 4px;
+      }
+
+      /* ── DIVIDER ── */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 20px 0;
+      }
+
+      .sub-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      /* ── SPECIAL HIGHLIGHT BOXES ── */
+      .highlight-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-top: 12px;
+      }
+      .highlight-box .hl-key {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--accent-cyan);
+        margin-bottom: 4px;
+      }
+      .highlight-box .hl-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-dim);
+      }
+
+      /* ── FOOTER ── */
+      .page-footer {
+        text-align: center;
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+      }
+      .page-footer span {
+        color: var(--accent-red);
+      }
+
+      .flow-step.default-step {
+        border-color: rgba(255, 77, 106, 0.4);
+        background: #140e10;
+      }
+      .flow-step.auction-step {
+        border-color: rgba(255, 208, 96, 0.4);
+        background: #141108;
+      }
+      .flow-step.repay-step {
+        border-color: rgba(0, 229, 160, 0.4);
+        background: #0a1410;
+      }
+      .flow-step.withdraw-step {
+        border-color: rgba(74, 158, 255, 0.4);
+        background: #0a0e16;
+      }
+
+      .arrow-green {
+        color: var(--accent-green);
+      }
+      .arrow-red {
+        color: var(--accent-red);
+      }
+
+      .sub-flow-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin-top: 16px;
+        flex-wrap: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══════════════ HEADER ══════════════ -->
+    <div class="page-header">
+      <h1>LiquidNFT Architecture &amp; Theory</h1>
+      <div class="subtitle">
+        NFT-Collateralized Lending Protocol on Ethereum Sepolia — Detailed
+        Reference
+      </div>
+      <div class="overview-block">
+        <p>
+          <span class="label">Overview</span> LiquidNFT is an NFT-collateralized
+          lending protocol on Ethereum Sepolia. It enables NFT holders to obtain
+          ETH liquidity <strong>without selling</strong> their assets by using
+          them as collateral.
+        </p>
+        <p>
+          <span class="label">Problem</span> NFTs are illiquid — owners needing
+          capital must sell, permanently losing ownership.
+        </p>
+        <p>
+          <span class="label">Solution</span> A trustless pawn-shop model —
+          <strong>lock NFT → borrow ETH → repay to reclaim</strong>. Defaulted
+          loans trigger automated 24h English auctions.
+        </p>
+      </div>
+    </div>
+
+    <!-- ══════════════ TOP 4 SECTIONS ══════════════ -->
+    <div class="top-grid">
+      <!-- CLIENT LAYER -->
+      <div class="section client-section">
+        <div class="section-header">
+          <div class="section-icon">🖥️</div>
+          <div class="section-title">Client Layer</div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">User / Browser</div>
+          <div class="card-body">
+            <span class="line hi">User / Browser interacts</span>
+            <span class="line"
+              >via Next.js UI <span class="code">App Router</span></span
+            >
+            <span class="line"
+              >React Hooks: <span class="code">useWallet/Offers</span></span
+            >
+            <span class="line arrow">↓ signs txns → MetaMask</span>
+            <span class="line"><span class="code">window.ethereum</span></span>
+            <span class="line arrow">↓ reads state</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">MetaMask Integration</div>
+          <div class="card-body">
+            <span class="line"><span class="code">window.ethereum</span></span>
+            <span class="line">Signs transactions</span>
+            <span class="line">Reads contract state</span>
+            <span class="line arrow">→ REST/JSON to Backend</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Data Flow</div>
+          <div class="card-body">
+            <span class="line arrow">→ REST/JSON API calls</span>
+            <span class="line arrow">← signed txns returned</span>
+            <span class="line warn">Verify JWT-hash</span>
+            <span class="line warn">Encrypt on transit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKEND LAYER -->
+      <div class="section backend-section">
+        <div class="section-header">
+          <div class="section-icon">⚙️</div>
+          <div class="section-title">Backend (Next.js API Routes)</div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">Auth API</div>
+          <div class="card-body">
+            <span class="line hi">signup/login</span>
+            <span class="line">link/logout</span>
+            <span class="line code">/api/auth/*</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">Wallet API</div>
+          <div class="card-body">
+            <span class="line hi">link/disconnect</span>
+            <span class="line code">/api/wallet/*</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">User Save API</div>
+          <div class="card-body">
+            <span class="line hi">batch ops</span>
+            <span class="line code">$set/$push</span>
+            <span class="line code">/api/user/save</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">Security Layer</div>
+          <div class="card-body">
+            <span class="line hi">JWT + bcrypt(12)</span>
+            <span class="line">AES-256-GCM</span>
+            <span class="line arrow">↓ persist</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">MongoDB Atlas</div>
+          <div class="card-body">
+            <span class="line hi">Persistent storage</span>
+            <span class="line">All user + loan data</span>
+            <span class="line arrow">← signed txns</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETHEREUM LAYER -->
+      <div class="section eth-section">
+        <div class="section-header">
+          <div class="section-icon">◆</div>
+          <div class="section-title">Ethereum Sepolia (Smart Contracts)</div>
+        </div>
+
+        <div class="center-contract">
+          <div class="name">LoanManager</div>
+          <div class="role">coordinator — disburse ETH · lock/release NFT</div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">LendingPool</div>
+          <div class="card-body">
+            <span class="line hi">ETH offers</span>
+            <span class="line">pass-through</span>
+            <span class="line code">NFT → borrower</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 14px">
+          <div class="card-title">NFTEscrow</div>
+          <div class="card-body">
+            <span class="line hi">NFT custody</span>
+            <span class="line">lock / release</span>
+            <span class="line arrow">→ trigger default</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">LiquidationAuction</div>
+          <div class="card-body">
+            <span class="line hi">24h English auction</span>
+            <span class="line">transfer NFT to winner</span>
+            <span class="line code">ETH → lender</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CORE THEORY -->
+      <div class="section theory-section">
+        <div class="section-header">
+          <div class="section-icon">📚</div>
+          <div class="section-title">Core Theory &amp; Concepts</div>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px">
+          <div class="card-title">Escrow</div>
+          <div class="card-body">
+            <span class="line">Neutral NFT custody</span>
+            <span class="line">during active loan</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px">
+          <div class="card-title">Basis Points</div>
+          <div class="card-body">
+            <span class="line">100 bps = 1%</span>
+            <span class="line">1000 bps = 10%/yr</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px">
+          <div class="card-title">Pro-rated Interest</div>
+          <div class="card-body">
+            <span class="line">per-second accrual</span>
+            <span class="line code">P×rate×Δt /</span>
+            <span class="line code">(10000×31536000)</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px">
+          <div class="card-title">Liquidation</div>
+          <div class="card-body">
+            <span class="line">trigger after expiry</span>
+            <span class="line">24h English auction</span>
+            <span class="line">highest bidder wins</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px">
+          <div class="card-title">ReentrancyGuard</div>
+          <div class="card-body">
+            <span class="line">on ETH-moving fns</span>
+            <span class="line">rejects recursive</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Pass-through Pool</div>
+          <div class="card-body">
+            <span class="line">holds offer ETH</span>
+            <span class="line">routes to lender</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ LOAN LIFECYCLE FLOW ══════════════ -->
+    <div class="section lifecycle-section">
+      <div class="section-header">
+        <div class="section-icon">🔄</div>
+        <div class="section-title">Loan Lifecycle Flow</div>
+      </div>
+
+      <!-- Main flow row -->
+      <div class="flow-row">
+        <div class="flow-step">
+          <div class="step-num">Step 1</div>
+          <div class="step-title">Create Offer</div>
+          <div class="step-body">
+            Lender → LendingPool<br />
+            <span style="color: var(--accent-cyan)">createOffer()</span> +
+            ETH<br />
+            sets rate &amp; duration
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-num">Step 2</div>
+          <div class="step-title">Deposit NFT</div>
+          <div class="step-body">
+            <span style="color: var(--accent-cyan)">approve()</span> on NFT<br />
+            <span style="color: var(--accent-cyan)">depositNFT()</span>
+            escrow<br />
+            returns escrowId
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-num">Step 3</div>
+          <div class="step-title">Take Loan</div>
+          <div class="step-body">
+            <span style="color: var(--accent-cyan)">takeLoan()</span> on Mgr<br />
+            NFT locks + ETH out<br />
+            interest accrues
+          </div>
+        </div>
+        <div
+          class="flow-arrow"
+          style="font-size: 28px; flex-direction: column; gap: 4px"
+        >
+          <span class="arrow-green">↗</span>
+          <span class="arrow-red">↘</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; flex: 2">
+          <div class="flow-step repay-step">
+            <div class="step-num" style="color: var(--accent-green)">
+              4A — On Time
+            </div>
+            <div class="step-title">Repay Loan</div>
+            <div class="step-body">
+              <span style="color: var(--accent-cyan)">repayLoan()</span> w/
+              ETH<br />
+              ETH → Lender (refund extra)<br />
+              NFT released to borrower
+            </div>
+          </div>
+          <div class="flow-step default-step">
+            <div class="step-num" style="color: var(--accent-red)">
+              4B — After Expiry
+            </div>
+            <div class="step-title">Default</div>
+            <div class="step-body">
+              anyone calls<br />
+              <span style="color: var(--accent-cyan)">triggerDefault()</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow" style="color: var(--accent-yellow)">→</div>
+        <div class="flow-step auction-step">
+          <div class="step-num" style="color: var(--accent-yellow)">Step 5</div>
+          <div class="step-title">Auction (24h)</div>
+          <div class="step-body">
+            English auction, bids<br />
+            <span style="color: var(--accent-cyan)">settle()</span> after 24h<br />
+            outbid → pending<br />
+            NFT → winner, ETH → lender
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step withdraw-step">
+          <div class="step-num" style="color: var(--client-color)">Step 6</div>
+          <div class="step-title">Withdraw Refunds</div>
+          <div class="step-body">
+            <span style="color: var(--accent-cyan)">withdrawRefund()</span
+            ><br />
+            manual pull pattern
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ AUTH + MONGO ══════════════ -->
+    <div class="two-col">
+      <!-- AUTH -->
+      <div class="section auth-section">
+        <div class="section-header">
+          <div class="section-icon">🔐</div>
+          <div class="section-title">Authentication &amp; Wallet Security</div>
+        </div>
+        <div class="auth-grid">
+          <div class="card">
+            <div class="card-title">Signup / Login</div>
+            <div class="card-body">
+              <span class="line">email + password</span>
+              <span class="line code">bcrypt(cost=12)</span>
+              <span class="line">SameSite=lax</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">JWT Issued</div>
+            <div class="card-body">
+              <span class="line">7-day expiry</span>
+              <span class="line code">httpOnly</span>
+              <span class="line code">SameSite=lax</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Connect Wallet</div>
+            <div class="card-body">
+              <span class="line code">eth_requestAccounts</span>
+              <span class="line code">POST /api/auth/wallet</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Dual Storage</div>
+            <div class="card-body">
+              <span class="line hi">bcrypt hash</span>
+              <span class="line code">walletHash + cipher</span>
+              <span class="line">AES-256-GCM</span>
+            </div>
+          </div>
+        </div>
+        <div class="auth-grid2">
+          <div class="card">
+            <div class="card-title">Auto-Reconnect</div>
+            <div class="card-body">
+              <span class="line code">/api/auth/me</span>
+              <span class="line">→ savedWalletAddress</span>
+              <span class="line">→ eth_accounts (silent)</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Logout / Disconnect</div>
+            <div class="card-body">
+              <span class="line warn">cookie maxAge=0</span>
+              <span class="line">blank wallet fields</span>
+              <span class="line">clears all state</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONGO -->
+      <div class="section mongo-section">
+        <div class="section-header">
+          <div class="section-icon">🗄️</div>
+          <div class="section-title">
+            MongoDB User Document (Embedded Subdocs)
+          </div>
+        </div>
+        <div class="mongo-grid">
+          <div class="card">
+            <div class="card-title">Identity</div>
+            <div class="card-body">
+              <span class="line">email + password</span>
+              <span class="line code">walletHash + cipher</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">offers[ ]</div>
+            <div class="card-body">
+              <span class="line">offerId, amount</span>
+              <span class="line">rateBps, duration</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">escrows[ ]</div>
+            <div class="card-body">
+              <span class="line">escrowId, nft, token</span>
+              <span class="line">locked/unlocked</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">loans[ ]</div>
+            <div class="card-body">
+              <span class="line">principal, rateBps</span>
+              <span class="line">Active/Repaid/Default</span>
+            </div>
+          </div>
+        </div>
+        <div class="mongo-grid2">
+          <div class="card">
+            <div class="card-title">bids[ ]</div>
+            <div class="card-body">
+              <span class="line">auctionId, outcome</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">auctionsWon[ ]</div>
+            <div class="card-body">
+              <span class="line">nft, tokenId, paid</span>
+              <span class="line">status lifecycle</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">nftPortfolio[ ]</div>
+            <div class="card-body">
+              <span class="line">nft, tokenId, pkd</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">notificationPrefs</div>
+            <div class="card-body">
+              <span class="line">expiry + outbid</span>
+              <span class="line">+ repaid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ KEY IMPL STATEMENTS ══════════════ -->
+    <div class="section impl-section">
+      <div class="section-header">
+        <div class="section-icon">⚡</div>
+        <div class="section-title">Key Implementation Statements</div>
+      </div>
+      <div class="impl-grid">
+        <div class="card">
+          <div class="card-title">Interest Buffer (0.1%)</div>
+          <div class="card-body">
+            <span class="line">Display = actual owed</span>
+            <span class="line warn">per-second accrual gap.</span>
+            <span class="line">Add 0.1% to amount</span>
+            <span class="line">to cover txn confirmation</span>
+            <span class="line">delay; retry on revert.</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">escrowId Generation</div>
+          <div class="card-body">
+            <span class="line code">hashuser, nft,</span>
+            <span class="line code">tokenId, timestamp.</span>
+            <span class="line">Same NFT redeposited</span>
+            <span class="line">yields unique IDs →</span>
+            <span class="line">sequential loans OK.</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">ETH as Strings</div>
+          <div class="card-body">
+            <span class="line">JS float + wei precision.</span>
+            <span class="line">BigInt via ethers.js;</span>
+            <span class="line">formatEther = string;</span>
+            <span class="line warn">persist as string only.</span>
+            <span class="line warn">NEVER cast to Number.</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Batch Save Ops</div>
+          <div class="card-body">
+            <span class="line code">/api/user/save</span>
+            <span class="line">multi-op per request.</span>
+            <span class="line code">$set + $push + status</span>
+            <span class="line">updates in one call.</span>
+            <span class="line">Subdocs run first.</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Lowercase Addresses</div>
+          <div class="card-body">
+            <span class="line warn">ETH addrs case-insens.</span>
+            <span class="line">Checksum = error data;</span>
+            <span class="line">hash &amp; cipher store</span>
+            <span class="line">lowercased; compare</span>
+            <span class="line">both sides lowercased.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ DEPLOYMENT NOTES ══════════════ -->
+    <div class="section deploy-section">
+      <div class="section-header">
+        <div class="section-icon">🚀</div>
+        <div class="section-title">Deployment &amp; Notes</div>
+      </div>
+      <div class="deploy-grid">
+        <div class="card">
+          <div class="card-title">Foundry Deploy</div>
+          <div class="card-body">
+            <span class="line code">forge script Deploy.s.sol</span>
+            <span class="line code">--broadcast --verify</span>
+            <span class="line">4 contracts in order +</span>
+            <span class="line code">setLoanManager()</span>
+            <span class="line">wiring</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Env Config</div>
+          <div class="card-body">
+            <span class="line code">env: PRIVATE_KEY,</span>
+            <span class="line code">SEPOLIA_RPC_URL, ETHERSCAN</span>
+            <span class="line code">.env.local: MONGODB_URI,</span>
+            <span class="line code">JWT_SECRET, contract addrs</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Contract Integration</div>
+          <div class="card-body">
+            <span class="line code">rb/contracts.js</span>
+            <span class="line">addresses from env vars</span>
+            <span class="line">human-readable ABIs</span>
+            <span class="line">(ethers.js parses)</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Mongo Conn Pattern</div>
+          <div class="card-body">
+            <span class="line hi">global cached connection</span>
+            <span class="line">avoids reconnect on HMR</span>
+            <span class="line">&amp; serverless cold starts</span>
+            <span class="line code">bufferCommands: false</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">No Price Oracle</div>
+          <div class="card-body">
+            <span class="line">Lenders manually price</span>
+            <span class="line">collateral. Production</span>
+            <span class="line">w/o add floor-price</span>
+            <span class="line">oracle + LTV enforcement.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <div class="page-footer">
+      LiquidNFT &nbsp;·&nbsp; Ethereum Sepolia &nbsp;·&nbsp; NFT-Collateralized
+      Lending Protocol &nbsp;
+    </div>
+  </body>
+</html>
