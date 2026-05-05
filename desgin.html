@@ -8,33 +8,32 @@
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
 
       :root {
-        --bg: #0a0c10;
-        --bg2: #0f1117;
-        --bg3: #14171f;
-        --border: #2a2d3a;
-        --border-bright: #3a3d4a;
-        --text: #e8eaf0;
-        --text-dim: #8b8fa8;
-        --text-muted: #5a5e72;
-        --accent-blue: #4a9eff;
-        --accent-cyan: #00d4ff;
-        --accent-green: #00e5a0;
-        --accent-yellow: #ffd060;
-        --accent-orange: #ff8c42;
-        --accent-red: #ff4d6a;
-        --accent-purple: #b06aff;
-        --accent-pink: #ff6ab0;
+        --bg: #f1eeec;
+        --bg2: #e8e3e0;
+        --bg3: #dfd8d4;
+        --border: #c9c0bb;
+        --border-bright: #b0a49e;
+        --text: #1a1a1a;
+        --text-dim: #3a3a3a;
+        --text-muted: #6b6460;
+        --accent-blue: #5d8b8b;
+        --accent-cyan: #5d8b8b;
+        --accent-green: #6b9e8a;
+        --accent-yellow: #b08a6e;
+        --accent-orange: #c47a5a;
+        --accent-red: #c46a6a;
+        --accent-purple: #7a8a9e;
+        --accent-pink: #d4a0a0;
 
-        /* Section colors */
-        --client-color: #4a9eff;
-        --backend-color: #ffd060;
-        --ethereum-color: #b06aff;
-        --theory-color: #ff4d6a;
-        --lifecycle-color: #00e5a0;
-        --auth-color: #ff8c42;
-        --mongo-color: #00d4ff;
-        --impl-color: #ffd060;
-        --deploy-color: #8b8fa8;
+        --client-color: #5d8b8b;
+        --backend-color: #8a7a6e;
+        --ethereum-color: #7a8a9e;
+        --theory-color: #c46a6a;
+        --lifecycle-color: #6b9e8a;
+        --auth-color: #c47a5a;
+        --mongo-color: #5d8b8b;
+        --impl-color: #8a7a6e;
+        --deploy-color: #6b6460;
       }
 
       * {
@@ -44,7 +43,15 @@
       }
 
       body {
-        background: var(--bg);
+        background: linear-gradient(
+          135deg,
+          #c9d8d8 0%,
+          #f7cbca 30%,
+          #f1f1f1 55%,
+          #d0e8e8 80%,
+          #5d8b8b 100%
+        );
+        background-attachment: fixed;
         color: var(--text);
         font-family: 'Space Grotesk', sans-serif;
         line-height: 1.5;
@@ -52,7 +59,6 @@
         min-width: 1600px;
       }
 
-      /* ── HEADER ── */
       .page-header {
         text-align: center;
         margin-bottom: 56px;
@@ -64,12 +70,7 @@
         font-size: 52px;
         font-weight: 700;
         letter-spacing: 3px;
-        background: linear-gradient(
-          135deg,
-          var(--accent-cyan),
-          var(--accent-blue),
-          var(--accent-purple)
-        );
+        background: linear-gradient(135deg, #5d8b8b, #7a8a9e, #c46a6a);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -83,7 +84,7 @@
         letter-spacing: 1px;
       }
       .overview-block {
-        background: #12151d;
+        background: rgba(255, 255, 255, 0.55);
         border: 1px solid var(--border);
         border-left: 4px solid var(--accent-cyan);
         border-radius: 8px;
@@ -91,6 +92,7 @@
         max-width: 1100px;
         margin: 0 auto;
         text-align: left;
+        backdrop-filter: blur(6px);
       }
       .overview-block p {
         font-size: 15px;
@@ -115,12 +117,12 @@
         margin-right: 8px;
       }
 
-      /* ── SECTION WRAPPER ── */
       .section {
         border-radius: 14px;
         padding: 28px 28px 32px;
         margin-bottom: 32px;
         position: relative;
+        backdrop-filter: blur(8px);
       }
       .section-header {
         display: flex;
@@ -138,7 +140,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.4);
       }
       .section-title {
         font-family: 'Rajdhani', sans-serif;
@@ -148,21 +150,53 @@
         text-transform: uppercase;
       }
 
-      /* ── TOP 4 SECTIONS GRID ── */
-      .top-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 24px;
+      /* TOP GRID: 4 sections side by side with inter-section arrows */
+      .top-grid-wrapper {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
         margin-bottom: 32px;
       }
+      .top-grid-wrapper .section {
+        flex: 1;
+        margin-bottom: 0;
+      }
+      .inter-section-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 6px;
+        flex-shrink: 0;
+        gap: 4px;
+      }
+      .inter-section-arrow .arr-line {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 22px;
+        color: #1a1a1a;
+        font-weight: 700;
+      }
+      .inter-section-arrow .arr-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        color: #1a1a1a;
+        letter-spacing: 0.5px;
+        text-align: center;
+        writing-mode: vertical-lr;
+        transform: rotate(180deg);
+        max-height: 120px;
+      }
 
-      /* ── CARD ── */
       .card {
-        background: #12151d;
+        background: rgba(255, 255, 255, 0.5);
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 18px 20px;
         transition: border-color 0.2s;
+        backdrop-filter: blur(4px);
       }
       .card:hover {
         border-color: var(--border-bright);
@@ -174,30 +208,32 @@
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-bottom: 10px;
+        color: #111111;
       }
       .card-body {
         font-family: 'JetBrains Mono', monospace;
         font-size: 12px;
-        color: var(--text-dim);
+        color: #111111;
         line-height: 1.8;
       }
       .card-body .line {
         display: block;
+        color: #111111;
       }
       .card-body .hi {
-        color: var(--text);
+        color: #000000;
+        font-weight: 600;
       }
       .card-body .code {
-        color: var(--accent-cyan);
+        color: #1a3a4a;
       }
       .card-body .arrow {
-        color: var(--accent-green);
+        color: #1a4a2a;
       }
       .card-body .warn {
-        color: var(--accent-yellow);
+        color: #4a2a00;
       }
 
-      /* ── BADGES / TAGS ── */
       .badge {
         display: inline-block;
         font-family: 'JetBrains Mono', monospace;
@@ -211,63 +247,42 @@
         margin-bottom: 6px;
       }
 
-      /* ── CLIENT LAYER ── */
       .client-section {
-        background: #0e1219;
-        border: 1.5px solid rgba(74, 158, 255, 0.3);
+        background: rgba(247, 203, 202, 0.25);
+        border: 1.5px solid rgba(196, 106, 106, 0.35);
       }
       .client-section .section-title {
         color: var(--client-color);
       }
       .client-section .card-title {
-        color: var(--client-color);
-      }
-      .client-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 16px;
+        color: #111111;
       }
 
-      /* ── BACKEND LAYER ── */
       .backend-section {
-        background: #0e1119;
-        border: 1.5px solid rgba(255, 208, 96, 0.3);
+        background: rgba(220, 210, 200, 0.3);
+        border: 1.5px solid rgba(138, 122, 110, 0.35);
       }
       .backend-section .section-title {
         color: var(--backend-color);
       }
       .backend-section .card-title {
-        color: var(--backend-color);
-      }
-      .backend-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 16px;
+        color: #111111;
       }
 
-      /* ── ETHEREUM LAYER ── */
       .eth-section {
-        background: #100e19;
-        border: 1.5px solid rgba(176, 106, 255, 0.3);
+        background: rgba(208, 218, 232, 0.3);
+        border: 1.5px solid rgba(122, 138, 158, 0.35);
       }
       .eth-section .section-title {
         color: var(--ethereum-color);
       }
       .eth-section .card-title {
-        color: var(--ethereum-color);
+        color: #111111;
       }
-      .eth-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 16px;
-      }
+
       .center-contract {
-        background: linear-gradient(
-          135deg,
-          rgba(176, 106, 255, 0.12),
-          rgba(176, 106, 255, 0.05)
-        );
-        border: 1.5px solid rgba(176, 106, 255, 0.5);
+        background: rgba(122, 138, 158, 0.15);
+        border: 1.5px solid rgba(122, 138, 158, 0.4);
         border-radius: 12px;
         padding: 20px;
         text-align: center;
@@ -283,34 +298,28 @@
       .center-contract .role {
         font-family: 'JetBrains Mono', monospace;
         font-size: 12px;
-        color: var(--text-dim);
+        color: #222222;
       }
 
-      /* ── THEORY LAYER ── */
       .theory-section {
-        background: #130e0f;
-        border: 1.5px solid rgba(255, 77, 106, 0.3);
+        background: rgba(247, 203, 202, 0.2);
+        border: 1.5px solid rgba(196, 106, 106, 0.3);
       }
       .theory-section .section-title {
         color: var(--theory-color);
       }
       .theory-section .card-title {
-        color: var(--theory-color);
-      }
-      .theory-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        color: #111111;
       }
 
-      /* ── LIFECYCLE ── */
       .lifecycle-section {
-        background: #0a120f;
-        border: 1.5px solid rgba(0, 229, 160, 0.3);
+        background: rgba(200, 225, 215, 0.3);
+        border: 1.5px solid rgba(107, 158, 138, 0.35);
       }
       .lifecycle-section .section-title {
         color: var(--lifecycle-color);
       }
+
       .flow-row {
         display: flex;
         align-items: stretch;
@@ -320,13 +329,14 @@
         overflow-x: auto;
       }
       .flow-step {
-        background: #12181a;
-        border: 1.5px solid rgba(0, 229, 160, 0.25);
+        background: rgba(255, 255, 255, 0.45);
+        border: 1.5px solid rgba(107, 158, 138, 0.3);
         border-radius: 10px;
         padding: 18px 20px;
         flex: 1;
         min-width: 180px;
         position: relative;
+        backdrop-filter: blur(4px);
       }
       .flow-step .step-num {
         font-family: 'JetBrains Mono', monospace;
@@ -340,22 +350,23 @@
         font-family: 'Rajdhani', sans-serif;
         font-size: 16px;
         font-weight: 700;
-        color: var(--text);
+        color: #111111;
         margin-bottom: 8px;
       }
       .flow-step .step-body {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
-        color: var(--text-dim);
+        color: #111111;
         line-height: 1.7;
       }
       .flow-arrow {
         display: flex;
         align-items: center;
         padding: 0 8px;
-        color: var(--lifecycle-color);
+        color: #111111;
         font-size: 22px;
         flex-shrink: 0;
+        font-weight: 700;
       }
       .flow-branch {
         display: grid;
@@ -377,45 +388,60 @@
         color: var(--accent-red);
       }
       .flow-step.good {
-        border-color: rgba(0, 229, 160, 0.4);
+        border-color: rgba(107, 158, 138, 0.45);
       }
       .flow-step.bad {
-        border-color: rgba(255, 77, 106, 0.4);
+        border-color: rgba(196, 106, 106, 0.45);
       }
 
-      /* ── AUTH ── */
       .auth-section {
-        background: #120f0a;
-        border: 1.5px solid rgba(255, 140, 66, 0.3);
+        background: rgba(235, 215, 200, 0.3);
+        border: 1.5px solid rgba(196, 122, 90, 0.35);
       }
       .auth-section .section-title {
         color: var(--auth-color);
       }
       .auth-section .card-title {
-        color: var(--auth-color);
-      }
-      .auth-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-bottom: 16px;
-      }
-      .auth-grid2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        color: #111111;
       }
 
-      /* ── MONGO ── */
+      /* Auth cards with arrows between them */
+      .auth-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin-bottom: 16px;
+      }
+      .auth-row .card {
+        flex: 1;
+      }
+      .auth-arrow {
+        display: flex;
+        align-items: center;
+        padding: 0 6px;
+        color: #111111;
+        font-size: 20px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .auth-row2 {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+      }
+      .auth-row2 .card {
+        flex: 1;
+      }
+
       .mongo-section {
-        background: #0a1214;
-        border: 1.5px solid rgba(0, 212, 255, 0.3);
+        background: rgba(200, 225, 232, 0.3);
+        border: 1.5px solid rgba(93, 139, 139, 0.35);
       }
       .mongo-section .section-title {
         color: var(--mongo-color);
       }
       .mongo-section .card-title {
-        color: var(--mongo-color);
+        color: #111111;
       }
       .mongo-grid {
         display: grid;
@@ -429,7 +455,6 @@
         gap: 16px;
       }
 
-      /* ── MID 2-COL LAYOUT ── */
       .two-col {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -437,16 +462,15 @@
         margin-bottom: 32px;
       }
 
-      /* ── IMPL SECTION ── */
       .impl-section {
-        background: #111008;
-        border: 1.5px solid rgba(255, 208, 96, 0.25);
+        background: rgba(220, 210, 195, 0.3);
+        border: 1.5px solid rgba(138, 122, 110, 0.3);
       }
       .impl-section .section-title {
         color: var(--impl-color);
       }
       .impl-section .card-title {
-        color: var(--impl-color);
+        color: #111111;
       }
       .impl-grid {
         display: grid;
@@ -454,16 +478,15 @@
         gap: 16px;
       }
 
-      /* ── DEPLOY SECTION ── */
       .deploy-section {
-        background: #0f1012;
-        border: 1.5px solid rgba(139, 143, 168, 0.3);
+        background: rgba(210, 210, 215, 0.3);
+        border: 1.5px solid rgba(107, 100, 96, 0.3);
       }
       .deploy-section .section-title {
         color: var(--deploy-color);
       }
       .deploy-section .card-title {
-        color: var(--deploy-color);
+        color: #111111;
       }
       .deploy-grid {
         display: grid;
@@ -471,7 +494,6 @@
         gap: 16px;
       }
 
-      /* ── FLOW CONNECTOR LABELS ── */
       .connector-label {
         font-family: 'JetBrains Mono', monospace;
         font-size: 10px;
@@ -481,7 +503,6 @@
         margin-top: 4px;
       }
 
-      /* ── DIVIDER ── */
       .divider {
         height: 1px;
         background: var(--border);
@@ -498,9 +519,8 @@
         display: block;
       }
 
-      /* ── SPECIAL HIGHLIGHT BOXES ── */
       .highlight-box {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.35);
         border: 1px solid var(--border);
         border-radius: 8px;
         padding: 14px 18px;
@@ -515,10 +535,9 @@
       .highlight-box .hl-val {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
-        color: var(--text-dim);
+        color: #111111;
       }
 
-      /* ── FOOTER ── */
       .page-footer {
         text-align: center;
         margin-top: 48px;
@@ -534,20 +553,20 @@
       }
 
       .flow-step.default-step {
-        border-color: rgba(255, 77, 106, 0.4);
-        background: #140e10;
+        border-color: rgba(196, 106, 106, 0.45);
+        background: rgba(247, 203, 202, 0.3);
       }
       .flow-step.auction-step {
-        border-color: rgba(255, 208, 96, 0.4);
-        background: #141108;
+        border-color: rgba(176, 138, 110, 0.45);
+        background: rgba(235, 218, 200, 0.3);
       }
       .flow-step.repay-step {
-        border-color: rgba(0, 229, 160, 0.4);
-        background: #0a1410;
+        border-color: rgba(107, 158, 138, 0.45);
+        background: rgba(200, 230, 218, 0.3);
       }
       .flow-step.withdraw-step {
-        border-color: rgba(74, 158, 255, 0.4);
-        background: #0a0e16;
+        border-color: rgba(93, 139, 139, 0.45);
+        background: rgba(200, 225, 232, 0.3);
       }
 
       .arrow-green {
@@ -564,10 +583,70 @@
         margin-top: 16px;
         flex-wrap: nowrap;
       }
+
+      /* Client section internal card arrows */
+      .client-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .client-card-arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px 0;
+        color: #111111;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      /* Backend section internal card arrows */
+      .backend-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .backend-card-arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px 0;
+        color: #111111;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      /* Ethereum section internal arrows */
+      .eth-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .eth-card-arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px 0;
+        color: #111111;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      /* Arrow label styling */
+      .arr-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+        padding: 1px 5px;
+        color: #222;
+        white-space: nowrap;
+        display: block;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <!-- ══════════════ HEADER ══════════════ -->
     <div class="page-header">
       <h1>LiquidNFT Architecture &amp; Theory</h1>
       <div class="subtitle">
@@ -593,151 +672,207 @@
       </div>
     </div>
 
-    <!-- ══════════════ TOP 4 SECTIONS ══════════════ -->
-    <div class="top-grid">
-      <!-- CLIENT LAYER -->
+    <!-- TOP GRID WITH INTER-SECTION ARROWS -->
+    <div class="top-grid-wrapper">
+      <!-- CLIENT SECTION -->
       <div class="section client-section">
         <div class="section-header">
           <div class="section-icon">🖥️</div>
           <div class="section-title">Client Layer</div>
         </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">User / Browser</div>
-          <div class="card-body">
-            <span class="line hi">User / Browser interacts</span>
-            <span class="line"
-              >via Next.js UI <span class="code">App Router</span></span
-            >
-            <span class="line"
-              >React Hooks: <span class="code">useWallet/Offers</span></span
-            >
-            <span class="line arrow">↓ signs txns → MetaMask</span>
-            <span class="line"><span class="code">window.ethereum</span></span>
-            <span class="line arrow">↓ reads state</span>
+        <div class="client-cards">
+          <div class="card">
+            <div class="card-title">User / Browser</div>
+            <div class="card-body">
+              <span class="line hi">User / Browser interacts</span>
+              <span class="line"
+                >via Next.js UI <span class="code">App Router</span></span
+              >
+              <span class="line"
+                >React Hooks: <span class="code">useWallet/Offers</span></span
+              >
+              <span class="line arrow">↓ signs txns → MetaMask</span>
+              <span class="line"
+                ><span class="code">window.ethereum</span></span
+              >
+              <span class="line arrow">↓ reads state</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">MetaMask Integration</div>
-          <div class="card-body">
-            <span class="line"><span class="code">window.ethereum</span></span>
-            <span class="line">Signs transactions</span>
-            <span class="line">Reads contract state</span>
-            <span class="line arrow">→ REST/JSON to Backend</span>
+          <div class="client-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">MetaMask Integration</div>
+            <div class="card-body">
+              <span class="line"
+                ><span class="code">window.ethereum</span></span
+              >
+              <span class="line">Signs transactions</span>
+              <span class="line">Reads contract state</span>
+              <span class="line arrow">→ REST/JSON to Backend</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Data Flow</div>
-          <div class="card-body">
-            <span class="line arrow">→ REST/JSON API calls</span>
-            <span class="line arrow">← signed txns returned</span>
-            <span class="line warn">Verify JWT-hash</span>
-            <span class="line warn">Encrypt on transit</span>
+          <div class="client-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">Data Flow</div>
+            <div class="card-body">
+              <span class="line arrow">→ REST/JSON API calls</span>
+              <span class="line arrow">← signed txns returned</span>
+              <span class="line warn">Verify JWT-hash</span>
+              <span class="line warn">Encrypt on transit</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- BACKEND LAYER -->
+      <!-- ARROW: Client → Backend -->
+      <div class="inter-section-arrow">
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+        >
+          <span class="arr-badge">REST/JSON</span>
+          <span style="font-size: 26px; font-weight: 700; color: #111">→</span>
+          <span class="arr-badge">signed txns</span>
+          <span style="font-size: 26px; font-weight: 700; color: #111">←</span>
+        </div>
+      </div>
+
+      <!-- BACKEND SECTION -->
       <div class="section backend-section">
         <div class="section-header">
           <div class="section-icon">⚙️</div>
           <div class="section-title">Backend (Next.js API Routes)</div>
         </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">Auth API</div>
-          <div class="card-body">
-            <span class="line hi">signup/login</span>
-            <span class="line">link/logout</span>
-            <span class="line code">/api/auth/*</span>
+        <div class="backend-cards">
+          <div class="card">
+            <div class="card-title">Auth API</div>
+            <div class="card-body">
+              <span class="line hi">signup/login</span>
+              <span class="line">link/logout</span>
+              <span class="line code">/api/auth/*</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">Wallet API</div>
-          <div class="card-body">
-            <span class="line hi">link/disconnect</span>
-            <span class="line code">/api/wallet/*</span>
+          <div class="backend-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">Wallet API</div>
+            <div class="card-body">
+              <span class="line hi">link/disconnect</span>
+              <span class="line code">/api/wallet/*</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">User Save API</div>
-          <div class="card-body">
-            <span class="line hi">batch ops</span>
-            <span class="line code">$set/$push</span>
-            <span class="line code">/api/user/save</span>
+          <div class="backend-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">User Save API</div>
+            <div class="card-body">
+              <span class="line hi">batch ops</span>
+              <span class="line code">$set/$push</span>
+              <span class="line code">/api/user/save</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">Security Layer</div>
-          <div class="card-body">
-            <span class="line hi">JWT + bcrypt(12)</span>
-            <span class="line">AES-256-GCM</span>
-            <span class="line arrow">↓ persist</span>
+          <div class="backend-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">Security Layer</div>
+            <div class="card-body">
+              <span class="line hi">JWT + bcrypt(12)</span>
+              <span class="line">AES-256-GCM</span>
+              <span class="line arrow">↓ persist</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">MongoDB Atlas</div>
-          <div class="card-body">
-            <span class="line hi">Persistent storage</span>
-            <span class="line">All user + loan data</span>
-            <span class="line arrow">← signed txns</span>
+          <div class="backend-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">MongoDB Atlas</div>
+            <div class="card-body">
+              <span class="line hi">Persistent storage</span>
+              <span class="line">All user + loan data</span>
+              <span class="line arrow">← signed txns</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- ETHEREUM LAYER -->
+      <!-- ARROW: Backend → Ethereum -->
+      <div class="inter-section-arrow">
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+        >
+          <span class="arr-badge">verify JWT</span>
+          <span style="font-size: 26px; font-weight: 700; color: #111">→</span>
+          <span class="arr-badge">encrypt</span>
+          <span style="font-size: 26px; font-weight: 700; color: #111">→</span>
+        </div>
+      </div>
+
+      <!-- ETHEREUM SECTION -->
       <div class="section eth-section">
         <div class="section-header">
           <div class="section-icon">◆</div>
           <div class="section-title">Ethereum Sepolia (Smart Contracts)</div>
         </div>
-
-        <div class="center-contract">
-          <div class="name">LoanManager</div>
-          <div class="role">coordinator — disburse ETH · lock/release NFT</div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">LendingPool</div>
-          <div class="card-body">
-            <span class="line hi">ETH offers</span>
-            <span class="line">pass-through</span>
-            <span class="line code">NFT → borrower</span>
+        <div class="eth-cards">
+          <div class="center-contract">
+            <div class="name">LoanManager</div>
+            <div class="role">
+              coordinator — disburse ETH · lock/release NFT
+            </div>
           </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 14px">
-          <div class="card-title">NFTEscrow</div>
-          <div class="card-body">
-            <span class="line hi">NFT custody</span>
-            <span class="line">lock / release</span>
-            <span class="line arrow">→ trigger default</span>
+          <div class="eth-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">LendingPool</div>
+            <div class="card-body">
+              <span class="line hi">ETH offers</span>
+              <span class="line">pass-through</span>
+              <span class="line code">NFT → borrower</span>
+            </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">LiquidationAuction</div>
-          <div class="card-body">
-            <span class="line hi">24h English auction</span>
-            <span class="line">transfer NFT to winner</span>
-            <span class="line code">ETH → lender</span>
+          <div class="eth-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">NFTEscrow</div>
+            <div class="card-body">
+              <span class="line hi">NFT custody</span>
+              <span class="line">lock / release</span>
+              <span class="line arrow">→ trigger default</span>
+            </div>
+          </div>
+          <div class="eth-card-arrow">↓</div>
+          <div class="card">
+            <div class="card-title">LiquidationAuction</div>
+            <div class="card-body">
+              <span class="line hi">24h English auction</span>
+              <span class="line">transfer NFT to winner</span>
+              <span class="line code">ETH → lender</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- CORE THEORY -->
+      <!-- ARROW: Ethereum → Theory -->
+      <div class="inter-section-arrow">
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+        >
+          <span style="font-size: 26px; font-weight: 700; color: #111">→</span>
+        </div>
+      </div>
+
+      <!-- THEORY SECTION -->
       <div class="section theory-section">
         <div class="section-header">
           <div class="section-icon">📚</div>
           <div class="section-title">Core Theory &amp; Concepts</div>
         </div>
-
         <div class="card" style="margin-bottom: 12px">
           <div class="card-title">Escrow</div>
           <div class="card-body">
@@ -745,7 +880,6 @@
             <span class="line">during active loan</span>
           </div>
         </div>
-
         <div class="card" style="margin-bottom: 12px">
           <div class="card-title">Basis Points</div>
           <div class="card-body">
@@ -753,7 +887,6 @@
             <span class="line">1000 bps = 10%/yr</span>
           </div>
         </div>
-
         <div class="card" style="margin-bottom: 12px">
           <div class="card-title">Pro-rated Interest</div>
           <div class="card-body">
@@ -762,7 +895,6 @@
             <span class="line code">(10000×31536000)</span>
           </div>
         </div>
-
         <div class="card" style="margin-bottom: 12px">
           <div class="card-title">Liquidation</div>
           <div class="card-body">
@@ -771,7 +903,6 @@
             <span class="line">highest bidder wins</span>
           </div>
         </div>
-
         <div class="card" style="margin-bottom: 12px">
           <div class="card-title">ReentrancyGuard</div>
           <div class="card-body">
@@ -779,7 +910,6 @@
             <span class="line">rejects recursive</span>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">Pass-through Pool</div>
           <div class="card-body">
@@ -790,22 +920,18 @@
       </div>
     </div>
 
-    <!-- ══════════════ LOAN LIFECYCLE FLOW ══════════════ -->
     <div class="section lifecycle-section">
       <div class="section-header">
         <div class="section-icon">🔄</div>
         <div class="section-title">Loan Lifecycle Flow</div>
       </div>
-
-      <!-- Main flow row -->
       <div class="flow-row">
         <div class="flow-step">
           <div class="step-num">Step 1</div>
           <div class="step-title">Create Offer</div>
           <div class="step-body">
             Lender → LendingPool<br />
-            <span style="color: var(--accent-cyan)">createOffer()</span> +
-            ETH<br />
+            <span style="color: #1a3a4a">createOffer()</span> + ETH<br />
             sets rate &amp; duration
           </div>
         </div>
@@ -814,9 +940,8 @@
           <div class="step-num">Step 2</div>
           <div class="step-title">Deposit NFT</div>
           <div class="step-body">
-            <span style="color: var(--accent-cyan)">approve()</span> on NFT<br />
-            <span style="color: var(--accent-cyan)">depositNFT()</span>
-            escrow<br />
+            <span style="color: #1a3a4a">approve()</span> on NFT<br />
+            <span style="color: #1a3a4a">depositNFT()</span> escrow<br />
             returns escrowId
           </div>
         </div>
@@ -825,7 +950,7 @@
           <div class="step-num">Step 3</div>
           <div class="step-title">Take Loan</div>
           <div class="step-body">
-            <span style="color: var(--accent-cyan)">takeLoan()</span> on Mgr<br />
+            <span style="color: #1a3a4a">takeLoan()</span> on Mgr<br />
             NFT locks + ETH out<br />
             interest accrues
           </div>
@@ -844,8 +969,7 @@
             </div>
             <div class="step-title">Repay Loan</div>
             <div class="step-body">
-              <span style="color: var(--accent-cyan)">repayLoan()</span> w/
-              ETH<br />
+              <span style="color: #1a3a4a">repayLoan()</span> w/ ETH<br />
               ETH → Lender (refund extra)<br />
               NFT released to borrower
             </div>
@@ -857,7 +981,7 @@
             <div class="step-title">Default</div>
             <div class="step-body">
               anyone calls<br />
-              <span style="color: var(--accent-cyan)">triggerDefault()</span>
+              <span style="color: #1a3a4a">triggerDefault()</span>
             </div>
           </div>
         </div>
@@ -867,7 +991,7 @@
           <div class="step-title">Auction (24h)</div>
           <div class="step-body">
             English auction, bids<br />
-            <span style="color: var(--accent-cyan)">settle()</span> after 24h<br />
+            <span style="color: #1a3a4a">settle()</span> after 24h<br />
             outbid → pending<br />
             NFT → winner, ETH → lender
           </div>
@@ -877,23 +1001,21 @@
           <div class="step-num" style="color: var(--client-color)">Step 6</div>
           <div class="step-title">Withdraw Refunds</div>
           <div class="step-body">
-            <span style="color: var(--accent-cyan)">withdrawRefund()</span
-            ><br />
+            <span style="color: #1a3a4a">withdrawRefund()</span><br />
             manual pull pattern
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════ AUTH + MONGO ══════════════ -->
     <div class="two-col">
-      <!-- AUTH -->
       <div class="section auth-section">
         <div class="section-header">
           <div class="section-icon">🔐</div>
           <div class="section-title">Authentication &amp; Wallet Security</div>
         </div>
-        <div class="auth-grid">
+        <!-- Auth top row with arrows -->
+        <div class="auth-row">
           <div class="card">
             <div class="card-title">Signup / Login</div>
             <div class="card-body">
@@ -902,6 +1024,7 @@
               <span class="line">SameSite=lax</span>
             </div>
           </div>
+          <div class="auth-arrow">→</div>
           <div class="card">
             <div class="card-title">JWT Issued</div>
             <div class="card-body">
@@ -910,6 +1033,7 @@
               <span class="line code">SameSite=lax</span>
             </div>
           </div>
+          <div class="auth-arrow">→</div>
           <div class="card">
             <div class="card-title">Connect Wallet</div>
             <div class="card-body">
@@ -917,6 +1041,7 @@
               <span class="line code">POST /api/auth/wallet</span>
             </div>
           </div>
+          <div class="auth-arrow">→</div>
           <div class="card">
             <div class="card-title">Dual Storage</div>
             <div class="card-body">
@@ -926,7 +1051,8 @@
             </div>
           </div>
         </div>
-        <div class="auth-grid2">
+        <!-- Auth bottom row with arrow -->
+        <div class="auth-row2">
           <div class="card">
             <div class="card-title">Auto-Reconnect</div>
             <div class="card-body">
@@ -935,6 +1061,7 @@
               <span class="line">→ eth_accounts (silent)</span>
             </div>
           </div>
+          <div class="auth-arrow">→</div>
           <div class="card">
             <div class="card-title">Logout / Disconnect</div>
             <div class="card-body">
@@ -946,7 +1073,6 @@
         </div>
       </div>
 
-      <!-- MONGO -->
       <div class="section mongo-section">
         <div class="section-header">
           <div class="section-icon">🗄️</div>
@@ -1015,7 +1141,6 @@
       </div>
     </div>
 
-    <!-- ══════════════ KEY IMPL STATEMENTS ══════════════ -->
     <div class="section impl-section">
       <div class="section-header">
         <div class="section-icon">⚡</div>
@@ -1075,7 +1200,6 @@
       </div>
     </div>
 
-    <!-- ══════════════ DEPLOYMENT NOTES ══════════════ -->
     <div class="section deploy-section">
       <div class="section-header">
         <div class="section-icon">🚀</div>
@@ -1131,10 +1255,9 @@
       </div>
     </div>
 
-    <!-- ══════════════ FOOTER ══════════════ -->
     <div class="page-footer">
       LiquidNFT &nbsp;·&nbsp; Ethereum Sepolia &nbsp;·&nbsp; NFT-Collateralized
-      Lending Protocol &nbsp;
+      Lending Protocol
     </div>
   </body>
 </html>
